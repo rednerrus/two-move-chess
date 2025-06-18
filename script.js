@@ -70,35 +70,28 @@ function handleTurnEndLogic() {
         return;
     }
 
-    // Get the current turn (after the move was made)
-    var currentTurn = game.turn();
-    
-    // Check if we're in a double move scenario
-    if (playerIsOnDoubleMove && currentDoubleMoveTurn && movesMadeThisTurn < 2) {
-        // Player should get another move - we need to switch back to them
-        var tempGame = new Chess(game.fen());
-        // Switch turn back to the double-move player
-        if (currentDoubleMoveTurn === 'w') {
-            tempGame.load(game.fen().replace(' b ', ' w '));
-        } else {
-            tempGame.load(game.fen().replace(' w ', ' b '));
-        }
-        game = tempGame;
+    // Check if current player is on a double move and hasn't used both moves yet
+    if (playerIsOnDoubleMove && movesMadeThisTurn < 2) {
+        // Player gets another move - switch turn back to them
+        var fen = game.fen();
+        var fenParts = fen.split(' ');
+        // Switch the active color back to the double-move player
+        fenParts[1] = currentDoubleMoveTurn;
+        game.load(fenParts.join(' '));
         updateStatus();
         return;
     }
 
-    // Turn officially ends
+    // Turn officially ends - reset for next player
     movesMadeThisTurn = 0;
+    playerIsOnDoubleMove = false;
     currentDoubleMoveTurn = null;
 
-    // Check if the NEW current player should get a double move
+    // Check if the opponent should get a double move next
     if (opponentGetsNextDoubleMove) {
         playerIsOnDoubleMove = true;
-        currentDoubleMoveTurn = currentTurn;
+        currentDoubleMoveTurn = game.turn(); // Current turn after the move
         opponentGetsNextDoubleMove = false;
-    } else {
-        playerIsOnDoubleMove = false;
     }
 
     updateStatus();
