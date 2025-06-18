@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(osascript:*)",
+      "Bash(curl:*)",
+      "Bash(open:*)"
+    ],
+    "deny": []
+  }
+}
