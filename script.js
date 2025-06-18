@@ -120,10 +120,10 @@ function updateStatus() {
     } else {
         // Game still on - show appropriate status for two-move chess
         if (playerIsOnDoubleMove) {
-            if (movesMadeThisTurn === 0) {
-                status = moveColor + ' to move (1 of 2 moves)';
-            } else if (movesMadeThisTurn === 1) {
+            if (movesMadeThisTurn === 1) {
                 status = moveColor + ' to move (2 of 2 moves)';
+            } else {
+                status = moveColor + ' to move (1 of 2 moves)';
             }
         } else {
             status = moveColor + ' to move';
