@@ -47,10 +47,13 @@ function onDrop(source, target) {
 
     // Increment moves made this turn
     movesMadeThisTurn++;
+    
+    console.log('Move made:', move.san, 'movesMadeThisTurn:', movesMadeThisTurn, 'playerIsOnDoubleMove:', playerIsOnDoubleMove);
 
     // Check if this move was a capture
     if (move.flags && move.flags.includes('c')) {
         opponentGetsNextDoubleMove = true;
+        console.log('Capture detected, opponent gets double move');
     }
 
     // Handle turn end logic
@@ -72,6 +75,7 @@ function handleTurnEndLogic() {
 
     // Check if current player is on a double move and hasn't used both moves yet
     if (playerIsOnDoubleMove && movesMadeThisTurn < 2) {
+        console.log('Player continues double move, moves made:', movesMadeThisTurn);
         // Player gets another move - switch turn back to them
         var fen = game.fen();
         var fenParts = fen.split(' ');
