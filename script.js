@@ -1,6 +1,8 @@
 // Initialize chess game
+console.log('Script loading...');
 var game = new Chess();
 var board = null;
+console.log('Chess game initialized');
 
 // Two-move chess state variables
 let playerIsOnDoubleMove = false;
