@@ -105,8 +105,8 @@ function updateStatus() {
     // During a double move, show the color of the player on the double move
     if (playerIsOnDoubleMove && currentDoubleMoveTurn) {
         moveColor = currentDoubleMoveTurn === 'w' ? 'White' : 'Black';
-    } else if (game.turn() === 'b') {
-        moveColor = 'Black';
+    } else {
+        moveColor = game.turn() === 'w' ? 'White' : 'Black';
     }
 
     // Check for game over conditions
