@@ -1,13 +1,16 @@
 ## ✅ COMPLETED - Two-Move Chess Implementation
 
-**Status: FUNCTIONAL MVP COMPLETE**
+**Status: FULLY FUNCTIONAL & PRODUCTION READY**
 
-Successfully built a working Two-Move Chess game in ~30 minutes using AI-assisted development.
+Successfully built a complete Two-Move Chess game using AI-assisted development.
+All critical bugs resolved, fully tested, and deployed to production.
 
 ### Final Implementation:
 - **Files Created:** `index.html`, `script.js`
 - **Libraries Used:** jQuery (required dependency), chess.js, chessboard.js
-- **Deployment Ready:** Ready for GitHub Pages
+- **Repository:** https://github.com/rednerrus/two-move-chess
+- **Live Site:** https://rednerrus.github.io/two-move-chess/
+- **Deployment:** ✅ LIVE on GitHub Pages
 
 ### Key Technical Solutions:
 1. **jQuery Dependency:** chessboard.js requires jQuery - critical missing piece initially
@@ -25,13 +28,51 @@ Successfully built a working Two-Move Chess game in ~30 minutes using AI-assiste
 *   **✅ P1: Implement the "two-move" capture rule** 
 *   **✅ P2: Game end conditions (checkmate/draw detection)**
 *   **✅ P3: Basic UI for status and reset**
-*   **🔄 P4: Deployment** (ready for GitHub Pages)
+*   **✅ P4: Deployment** (live on GitHub Pages)
 
 ### Two-Move Rule Implementation:
 - Captures trigger `opponentGetsNextDoubleMove = true`
 - Turn switching managed via `currentDoubleMoveTurn` and FEN manipulation
 - Status displays "1 of 2 moves" / "2 of 2 moves" correctly
 - Game logic properly handles consecutive moves for same player
+
+### ✅ DEBUGGING SESSION - Two-Move Logic Fixes
+**Date:** 2025-06-19
+
+**Issues Found & Fixed:**
+1. **Status Display Bug:** Status was incorrectly showing move counts (showed "2 of 2" when it should show "1 of 2")
+   - **Root Cause:** Logic error in `updateStatus()` function checking `movesMadeThisTurn` values
+   - **Fix:** Corrected conditional logic in script.js:123-127
+   - **Commit:** c0a45e0
+
+2. **Pawn Double Move Turn Switching Bug:** When a player moved a pawn two spaces (or any capture), the turn would incorrectly switch to the opponent instead of allowing the same player to continue their double move
+   - **Root Cause:** Status display logic was using `game.turn()` instead of `currentDoubleMoveTurn` during double moves
+   - **Fix:** Updated `updateStatus()` function to check `currentDoubleMoveTurn` during double moves
+   - **Commit:** cac2f1f (debugging version), 83557fe (clean version)
+
+3. **✅ CRITICAL: Double Move Snapback Issue** - Second move of double move would snap back
+   - **Root Cause:** Complex state synchronization issue between custom two-move logic and chess.js turn system
+   - **Technical Details:**
+     - `onDragStart` was checking `game.turn()` before custom double-move logic
+     - En passant squares from pawn two-square moves prevented subsequent moves
+     - FEN manipulation required to clear en passant state and set correct turn
+   - **Solution:** 
+     - Fixed `onDragStart` to prioritize `currentDoubleMoveTurn` over `game.turn()`
+     - Added FEN manipulation in `handleTurnEndLogic` to clear en passant and set turn
+     - Proper handling of both pawn two-square and regular moves during double turns
+   - **Commit:** 9a74b36
+
+4. **GitHub Pages Caching Issue:** Changes weren't reflected on hosted version due to browser caching
+   - **Solution:** Hard refresh with Ctrl+Shift+R or use incognito mode
+   - **Workflow:** Local changes must be committed and pushed to GitHub for hosted version to update
+
+**✅ FINAL STATUS: FULLY FUNCTIONAL**
+- ✅ Two-move rule working correctly for all move types
+- ✅ En passant handling during double moves
+- ✅ Status display accurate for all game states  
+- ✅ No piece snapback issues
+- ✅ Clean production code (debugging logs removed)
+- ✅ Deployed to GitHub Pages
 
 Here's the plan:
 
