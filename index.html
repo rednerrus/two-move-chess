@@ -6,57 +6,231 @@
     <title>Two-Move Chess</title>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <style>
+        /* CSS Custom Properties for Theming */
+        :root {
+            /* Light Theme (Default) */
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --text-secondary: #555;
+            --panel-bg: #fff;
+            --panel-border: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.15);
+            --button-primary: #4CAF50;
+            --button-primary-hover: #45a049;
+            --button-secondary: #666;
+            --button-secondary-hover: #555;
+            --square-light: #f0d9b5;
+            --square-dark: #b58863;
+        }
+
+        body.dark-theme {
+            /* Dark Theme */
+            --bg-color: #2c2f33;
+            --text-color: #fafafa;
+            --text-secondary: #cccccc;
+            --panel-bg: #36393f;
+            --panel-border: #4a4d52;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --shadow-strong: rgba(0, 0, 0, 0.6);
+            --button-primary: #5cb85c;
+            --button-primary-hover: #4cae4c;
+            --button-secondary: #777;
+            --button-secondary-hover: #888;
+            --square-light: #b2b2b2;
+            --square-dark: #7f7f7f;
+        }
+
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            background-color: #f5f5f5;
         }
-        
+
         h1 {
-            color: #333;
+            color: var(--text-color);
             margin-bottom: 20px;
-        }
-        
-        #myBoard {
-            width: 400px;
-            margin: 20px 0;
-        }
-        
-        #status {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 20px 0;
-            padding: 10px 20px;
-            background-color: #fff;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            min-height: 20px;
+            font-size: 2rem;
             text-align: center;
         }
-        
-        #resetButton {
-            font-size: 16px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        
-        #resetButton:hover {
-            background-color: #45a049;
-        }
-        
+
+
+        /* Game container */
         .game-container {
-            background-color: white;
+            background-color: var(--panel-bg);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Board styling */
+        #myBoard {
+            width: 90vw;
+            max-width: 500px;
+            box-shadow: 0 10px 20px var(--shadow-strong);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Controls panel */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        /* Status display */
+        #status {
+            font-size: 18px;
+            font-weight: 600;
+            padding: 15px 25px;
+            background-color: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, border-color 0.3s;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Button styling */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        #resetButton {
+            background-color: var(--button-primary);
+            color: white;
+        }
+
+        #resetButton:hover {
+            background-color: var(--button-primary-hover);
+            transform: translateY(-2px);
+        }
+
+        #themeToggle {
+            background-color: var(--button-secondary);
+            color: white;
+        }
+
+        #themeToggle:hover {
+            background-color: var(--button-secondary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Instructions */
+        .instructions {
+            background-color: var(--panel-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            margin-bottom: 30px;
+            max-width: 600px;
+            text-align: left;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .instructions h2 {
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .instructions h3 {
+            color: var(--text-secondary);
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .instructions p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        /* Override chessboard.js square colors */
+        .white-1e1d7 {
+            background-color: var(--square-light) !important;
+        }
+
+        .black-3c85d {
+            background-color: var(--square-dark) !important;
+        }
+
+        /* Responsive design */
+        @media (min-width: 800px) {
+            #myBoard {
+                width: 450px;
+            }
+
+            .controls {
+                width: 450px;
+            }
+        }
+
+        @media (min-width: 1000px) {
+            #myBoard {
+                width: 500px;
+            }
+
+            .controls {
+                width: 500px;
+            }
+        }
+
+        /* Smooth animations for piece movement */
+        .square-55d63 {
+            transition: background-color 0.2s ease;
         }
     </style>
 </head>
@@ -65,8 +239,42 @@
     
     <div class="game-container">
         <div id="myBoard"></div>
-        <div id="status"></div>
-        <button id="resetButton">Reset Game</button>
+        <div class="controls">
+            <div id="status"></div>
+            <div class="button-group">
+                <button id="resetButton">Reset Game</button>
+                <button id="themeToggle">🌙 Dark Mode</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>How to Play</h2>
+        <p><strong>Two-Move Chess</strong> is a variant of regular chess with one key difference: when your opponent captures one of your pieces, you get a double move on your next turn.</p>
+        
+        <h3>Basic Rules</h3>
+        <ul>
+            <li>All standard chess rules apply (movement, castling, en passant, etc.)</li>
+            <li>Players alternate turns as in regular chess</li>
+            <li>When your opponent captures one of your pieces, you get a <strong>double move</strong> on your next turn</li>
+            <li>During a double move, the player makes two consecutive moves before play returns to their opponent</li>
+        </ul>
+        
+        <h3>How to Play</h3>
+        <ul>
+            <li><strong>Drag and drop</strong> pieces to make moves</li>
+            <li>The status display shows whose turn it is</li>
+            <li>When a player has a double move, the status will show "1 of 2 moves" and "2 of 2 moves"</li>
+            <li>Pawns automatically promote to queens when reaching the opposite end</li>
+            <li>Click "Reset Game" to start over</li>
+        </ul>
+        
+        <h3>Strategy Tips</h3>
+        <ul>
+            <li>Be careful about captures - giving your opponent two moves can be dangerous</li>
+            <li>Use double moves strategically for powerful combinations</li>
+            <li>Consider the position after both moves when planning captures</li>
+        </ul>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -16,7 +16,7 @@ function initBoard() {
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd,
-        pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        pieceTheme: 'img/chesspieces/cburnett/{piece}.svg'
     };
     board = Chessboard('myBoard', config);
 }
@@ -181,11 +181,34 @@ function resetGame() {
     updateStatus();
 }
 
+// Theme toggle functionality
+function toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+    const themeButton = document.getElementById('themeToggle');
+    const isDark = document.body.classList.contains('dark-theme');
+    
+    themeButton.innerHTML = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    
+    // Save theme preference to localStorage
+    localStorage.setItem('chess-theme', isDark ? 'dark' : 'light');
+}
+
+// Load saved theme on page load
+function loadTheme() {
+    const savedTheme = localStorage.getItem('chess-theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.getElementById('themeToggle').innerHTML = '☀️ Light Mode';
+    }
+}
+
 // Initialize the game when page loads
 document.addEventListener('DOMContentLoaded', function() {
+    loadTheme();
     initBoard();
     updateStatus();
     
-    // Add reset button event listener
+    // Add event listeners
     document.getElementById('resetButton').addEventListener('click', resetGame);
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 });

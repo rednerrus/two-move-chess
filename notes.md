@@ -274,3 +274,78 @@ Provide the fully modified `script.js`.
    *   En passant, castling, pawn promotion variants (use `chess.js` defaults; promotion to Queen is fine).
 
 This plan is ambitious for 50 minutes but focuses AI on the heavy lifting. The key is clear, iterative prompting and relying on the power of the chosen libraries. Let's get started! I'm ready when you are to feed the first batch of instructions to Claude Code.
+
+---
+
+## 🎨 NEW PHASE: STYLING & UI ENHANCEMENT
+
+**Status: IN PROGRESS**  
+**Date Started:** 2025-06-19
+
+### Current Implementation State
+- ✅ Fully functional Two-Move Chess game
+- ✅ Basic HTML/CSS/JavaScript with chessboard.js and chess.js
+- ✅ Deployed to GitHub Pages: https://rednerrus.github.io/two-move-chess/
+- ✅ All game logic working correctly (two-move rule, status display, etc.)
+
+### Styling Goals & Strategy
+**Objective:** Transform the basic chess app into a modern, professional-looking application without breaking existing functionality.
+
+**Zen's Recommended Approach:** Hybrid Theming Strategy
+1. **JavaScript config** for piece themes (one-time asset setup)
+2. **CSS Custom Properties** for board colors and UI theming (dynamic theme switching)
+3. **Mobile-first responsive design** with viewport-based sizing
+
+### Implementation Plan
+
+#### Phase 1: Piece Theme Enhancement
+- **Research:** Choose from jbkunst/chessboardjs-themes (Alpha, Chess24, Wikipedia, Leipzig, Metro)
+- **Assets:** Download and organize piece images in `/img/chesspieces/theme-name/`
+- **Integration:** Update JavaScript board config with `pieceTheme` parameter
+
+#### Phase 2: Modern CSS Theming
+- **CSS Custom Properties:** Implement light/dark theme variables
+- **Color Schemes:** Chess24-inspired light theme, Lichess-inspired dark theme
+- **Theme Toggle:** JavaScript button to switch between themes instantly
+
+#### Phase 3: Responsive Layout
+- **Mobile-First:** Viewport-based board sizing (90vw, max 500px)
+- **Desktop Layout:** Side-by-side board and controls
+- **Status Panel:** Consistent styling with shadow and rounded corners
+
+### Technical Decisions
+
+**Why stick with chessboard.js?**
+- Avoid premature optimization - current implementation works
+- Library switching would require refactoring existing game logic
+- chessboard.js is perfectly capable of professional styling
+
+**Why hybrid approach?**
+- **Maintainability:** Separates piece assets (JS config) from UI colors (CSS)
+- **Performance:** CSS-only theme switching is instantaneous
+- **Consistency:** Themes entire application, not just the board
+
+### Inspiration Sources
+- **Lichess.org:** Clean minimalist design, excellent dark theme
+- **Chess24:** Professional color schemes and piece sets  
+- **jbkunst/chessboardjs-themes:** Multiple modern piece style options
+
+### Success Criteria
+- [x] Professional visual appearance
+- [x] Smooth light/dark theme switching
+- [x] Fully responsive across all devices
+- [x] Maintains all existing functionality
+- [x] Easy to maintain and extend
+- [x] Game board prioritized at top of page
+
+### ✅ STYLING PHASE COMPLETE
+**Date Completed:** 2025-06-19
+
+**Final Implementation:**
+- **Piece Set:** Lichess cburnett SVG pieces (professional quality)
+- **Theming:** CSS Custom Properties with light/dark mode toggle
+- **Layout:** Mobile-first responsive design with game board at top
+- **Features:** Theme persistence, smooth animations, modern typography
+- **Performance:** Instant theme switching, optimized CSS transitions
+
+**Ready for:** Final deployment and testing on GitHub Pages

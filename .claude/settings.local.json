@@ -4,7 +4,12 @@
       "Bash(mkdir:*)",
       "Bash(osascript:*)",
       "Bash(curl:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:rawgit.com)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }
