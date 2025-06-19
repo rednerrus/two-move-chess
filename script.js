@@ -50,7 +50,7 @@ function onDrop(source, target) {
     // Increment moves made this turn
     movesMadeThisTurn++;
     
-    console.log('Move made:', move.san, 'movesMadeThisTurn:', movesMadeThisTurn, 'playerIsOnDoubleMove:', playerIsOnDoubleMove);
+    console.log('=== MOVE MADE (CACHE CLEARED) ===:', move.san, 'movesMadeThisTurn:', movesMadeThisTurn, 'playerIsOnDoubleMove:', playerIsOnDoubleMove);
 
     // Check if this move was a capture
     if (move.flags && move.flags.includes('c')) {
@@ -59,7 +59,9 @@ function onDrop(source, target) {
     }
 
     // Handle turn end logic
+    console.log('About to call handleTurnEndLogic()');
     handleTurnEndLogic();
+    console.log('handleTurnEndLogic() completed');
 }
 
 // Update board position after piece snap
@@ -69,24 +71,35 @@ function onSnapEnd() {
 
 // Handle turn end logic for two-move chess
 function handleTurnEndLogic() {
+    console.log('handleTurnEndLogic called - playerIsOnDoubleMove:', playerIsOnDoubleMove, 'movesMadeThisTurn:', movesMadeThisTurn);
+    
     // Check if game is over
     if (game.game_over()) {
+        console.log('Game is over');
         updateStatus();
         return;
     }
 
     // Check if current player is on a double move and hasn't used both moves yet
     if (playerIsOnDoubleMove && movesMadeThisTurn < 2) {
-        console.log('Player continues double move, moves made:', movesMadeThisTurn);
+        console.log('Player continues double move, moves made:', movesMadeThisTurn, 'currentDoubleMoveTurn:', currentDoubleMoveTurn);
+        console.log('Current game.turn():', game.turn());
         // Player gets another move - switch turn back to them
         var fen = game.fen();
         var fenParts = fen.split(' ');
+        console.log('Original FEN parts[1] (turn):', fenParts[1]);
         // Switch the active color back to the double-move player
         fenParts[1] = currentDoubleMoveTurn;
-        game.load(fenParts.join(' '));
+        var newFen = fenParts.join(' ');
+        console.log('Setting FEN to continue double move:', newFen);
+        game.load(newFen);
+        console.log('After FEN load, game.turn():', game.turn());
         updateStatus();
+        console.log('Returning early from handleTurnEndLogic for double move continuation');
         return;
     }
+
+    console.log('Turn officially ending - resetting state');
 
     // Turn officially ends - reset for next player
     movesMadeThisTurn = 0;
@@ -96,7 +109,7 @@ function handleTurnEndLogic() {
     // Check if the opponent should get a double move next
     if (opponentGetsNextDoubleMove) {
         playerIsOnDoubleMove = true;
-        currentDoubleMoveTurn = game.turn(); // Current turn after the move
+        currentDoubleMoveTurn = game.turn(); // This is the opponent who should get the double move
         opponentGetsNextDoubleMove = false;
     }
 
@@ -108,7 +121,10 @@ function updateStatus() {
     var status = '';
     var moveColor = 'White';
     
-    if (game.turn() === 'b') {
+    // During a double move, show the color of the player on the double move
+    if (playerIsOnDoubleMove && currentDoubleMoveTurn) {
+        moveColor = currentDoubleMoveTurn === 'w' ? 'White' : 'Black';
+    } else if (game.turn() === 'b') {
         moveColor = 'Black';
     }
 
