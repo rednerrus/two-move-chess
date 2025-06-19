@@ -23,18 +23,28 @@ function initBoard() {
 
 // Prevent dragging pieces when it's not legal
 function onDragStart(source, piece, position, orientation) {
+    
     // Don't pick up pieces if the game is over
     if (game.game_over()) return false;
 
-    // Only pick up pieces for the side to move
-    if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-        return false;
+    var pieceColor = piece.charAt(0); // 'w' or 'b'
+
+    if (playerIsOnDoubleMove) {
+        // If it's a double move, the currentDoubleMoveTurn variable is king
+        if (currentDoubleMoveTurn === 'w' && pieceColor === 'b') return false;
+        if (currentDoubleMoveTurn === 'b' && pieceColor === 'w') return false;
+    } else {
+        // Normal turn, use game.turn()
+        if (game.turn() === 'w' && pieceColor === 'b') return false;
+        if (game.turn() === 'b' && pieceColor === 'w') return false;
     }
+
+    return true; // Explicitly return true if no conditions prevent dragging
 }
 
 // Handle piece drops
 function onDrop(source, target) {
+    
     // See if the move is legal
     var move = game.move({
         from: source,
@@ -45,6 +55,7 @@ function onDrop(source, target) {
     // Illegal move
     if (move === null) return 'snapback';
 
+
     // Increment moves made this turn
     movesMadeThisTurn++;
     
@@ -54,7 +65,7 @@ function onDrop(source, target) {
     }
 
     // Handle turn end logic
-    handleTurnEndLogic();
+    handleTurnEndLogic(move);
 }
 
 // Update board position after piece snap
@@ -63,28 +74,49 @@ function onSnapEnd() {
 }
 
 // Handle turn end logic for two-move chess
-function handleTurnEndLogic() {
+function handleTurnEndLogic(move) {
     // Check if game is over
     if (game.game_over()) {
         updateStatus();
         return;
     }
 
-    // Check if current player is on a double move and hasn't used both moves yet
-    if (playerIsOnDoubleMove && movesMadeThisTurn < 2) {
-        // Player gets another move - switch turn back to them
-        var fen = game.fen();
-        var fenParts = fen.split(' ');
-        // Switch the active color back to the double-move player
-        fenParts[1] = currentDoubleMoveTurn;
-        game.load(fenParts.join(' '));
+    // Handle first move of double move - critical en passant and turn management
+    if (playerIsOnDoubleMove && movesMadeThisTurn === 1) {
+
+        const PAWN_TWO_SQUARE_FLAG = 'b';
+        if (move.flags.includes(PAWN_TWO_SQUARE_FLAG)) {
+            // Get FEN and clear en passant square + set correct turn
+            let fen = game.fen();
+            let parts = fen.split(" ");
+            parts[3] = '-'; // Clear en passant square
+            parts[1] = currentDoubleMoveTurn; // Set correct turn
+            game.load(parts.join(" "));
+        } else {
+            // Fix turn for non-pawn moves
+            let fen = game.fen();
+            let parts = fen.split(" ");
+            parts[1] = currentDoubleMoveTurn;
+            game.load(parts.join(" "));
+        }
+
+        
         updateStatus();
         return;
     }
 
-    // Turn officially ends - reset for next player
-    movesMadeThisTurn = 0;
-    playerIsOnDoubleMove = false;
+    // Handle second move of double move - end the double move
+    if (playerIsOnDoubleMove && movesMadeThisTurn === 2) {
+        playerIsOnDoubleMove = false;
+        movesMadeThisTurn = 0;
+        currentDoubleMoveTurn = null;
+        // chess.js has already flipped the turn to the opponent, which is correct here
+    }
+
+    // Normal turn end - reset for next player
+    if (!playerIsOnDoubleMove) {
+        movesMadeThisTurn = 0;
+    }
     currentDoubleMoveTurn = null;
 
     // Check if the opponent should get a double move next
